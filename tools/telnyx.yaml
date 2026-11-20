@@ -1,0 +1,31 @@
+tool: telnyx
+name: Telnyx
+adapter: telnyx
+# Vertically integrated: STT, LLM, TTS and turn-taking are all in-house.
+# Reached over Plivo like every other tool: the bench never routes a tool's
+# call over that tool's own network.
+#
+# Not pinned here: with more than one assistant on the account the adapter
+# cannot tell which is under test. Set TELNYX_ASSISTANT_ID in .env, or add
+# `assistant_id: <id>` here, to pin yours.
+# number: omitted -- discovered from the numbers attached to the assistant's
+# own TeXML app, or set TELNYX_VENDOR_NUMBER in .env to override.
+agent:
+  # Must match the assistant's live greeting byte for byte, and the scenarios
+  # file's turn_1.agent_expected. The bench refuses to run on a mismatch, so
+  # the published receipt is provably the configuration that ran.
+  greeting: "Thanks for calling Northwind Internet. How can I help you today?"
+  system_prompt_from_scenarios: data/voice-bench/ttfab_scenarios.json
+  model: null   # accept + record the tool's default
+  stt: null
+  tts: null
+# Used only by harness/provision/telnyx.py, never by the bench.
+provision:
+  agent_name: northwind-telnyx-bench
+  # Telnyx's create-assistant API requires a model; there is no "give me your
+  # default" option. This is what the account's existing bench assistant runs
+  # (read 2026-07-30), i.e. the platform's own choice rather than ours. The
+  # receipt records whatever is actually in force, and
+  # `--stack-from <assistant_id>` re-derives this if Telnyx moves.
+  template_defaults:
+    model: moonshotai/Kimi-K2.6

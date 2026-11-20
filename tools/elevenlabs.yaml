@@ -1,0 +1,38 @@
+tool: elevenlabs
+name: ElevenLabs
+adapter: elevenlabs
+# The most transparent platform here: it names its LLM, its ASR provider and
+# its TTS model, and exposes LLM temperature. Its receipt's `unsupported` list
+# is empty, which is the direct comparison to Bland's three entries.
+#
+# Everything the bench reads is nested under conversation_config:
+#   agent.first_message, agent.prompt.prompt, asr.*, tts.*, turn.*
+#
+# Not pinned here: with more than one agent on the account the adapter cannot
+# tell which is under test and refuses. Set ELEVENLABS_AGENT_ID in .env, or add
+# `agent_id: <id>` here, to pin yours.
+# number: omitted -- discovered from the agent's assignment. The number in use
+# is a Twilio number imported into ElevenLabs, which keeps the tool's leg off
+# the bench's own carrier. ElevenLabs sells no numbers: inbound arrives over a
+# number imported from Twilio, Exotel or your own SIP trunk, so there is no
+# purchase path and this one cannot be made dialable by spending money alone.
+#
+# Checklist before the first run (harness/provision/elevenlabs.py does 1 and 2):
+#   1. Set agent.prompt.prompt to the Northwind prompt.
+#   2. Set agent.first_message to the greeting below; empty means the agent
+#      waits for the caller and there is no greeting to detect.
+#   3. Disable turn.soft_timeout_config (timeout_seconds: -1). Armed, the agent
+#      speaks a stall phrase when the LLM is slow -- that filler becomes the
+#      first audio, so TTFAB would time the "hmm" rather than the answer, and
+#      it is long enough to pass the judge's content guard. The bench refuses
+#      to run with it on.
+#   4. Import and assign a number (see above).
+agent:
+  greeting: "Thanks for calling Northwind Internet. How can I help you today?"
+  system_prompt_from_scenarios: data/voice-bench/ttfab_scenarios.json
+  model: null   # accept + record the tool's default
+  stt: null
+  tts: null
+# Used only by harness/provision/elevenlabs.py, never by the bench.
+provision:
+  agent_name: northwind-elevenlabs-bench

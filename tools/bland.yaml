@@ -1,0 +1,31 @@
+tool: bland
+name: Bland AI
+adapter: bland
+# The number IS the agent. There is no agent object behind an inbound call:
+# prompt, first_sentence, voice and the interruption knobs live on the phone
+# number itself (POST /v1/inbound/{number} takes them inline and accepts no
+# agent_id). So this tool is pinned by number, not by agent id.
+#
+# number: omitted -- set BLAND_PHONE_NUMBER in .env, or pin it here. With
+# exactly one inbound number on the account the adapter uses it; with more
+# than one it refuses rather than guess which is under test.
+#
+# Checklist before the first run (harness/provision/bland.py does 2 and 3):
+#   1. Own an inbound number (see number_monthly_usd below, or BYO via Bland's
+#      Twilio flow).
+#   2. Set its prompt to the Northwind prompt.
+#   3. Set first_sentence to the greeting below. Without it Bland lets the
+#      model open the call, so the greeting differs every call and live VAD
+#      has no fixed utterance to wait for.
+agent:
+  greeting: "Thanks for calling Northwind Internet. How can I help you today?"
+  system_prompt_from_scenarios: data/voice-bench/ttfab_scenarios.json
+  model: null   # a Bland tier ("enhanced"), not an LLM identity
+  stt: null     # not exposed at all -- see unsupported in the receipt
+  tts: null
+# Used only by harness/provision/bland.py, never by the bench.
+provision:
+  # A Bland inbound number is a monthly subscription. Vapi's is free and
+  # Retell's is about $2, so this is the one platform with no way to hold a
+  # verifiable agent without an active paid number.
+  number_monthly_usd: 15

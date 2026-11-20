@@ -1,0 +1,43 @@
+tool: retell
+name: Retell AI
+adapter: retell
+# The two-object case: the agent holds voice and turn-taking, and its
+# response_engine points at a separate retell-llm holding the prompt and
+# greeting. An agent id alone does not identify a configuration here, so the
+# receipt carries both objects and both version numbers.
+#
+# Not pinned here: with more than one agent on the account the adapter cannot
+# tell which is under test, so it refuses rather than guess. Set
+# RETELL_AGENT_ID in .env, or add `agent_id: <id>` here, to pin yours. The bench
+# never creates it (read-only contract); harness/provision/retell.py does.
+# number: omitted -- discovered from the numbers whose INBOUND agent is this
+# agent (the bench dials in), or set RETELL_PHONE_NUMBER in .env.
+#
+# Dashboard checklist before the first run:
+#   1. Create a single-prompt agent; paste the Northwind prompt as the general
+#      prompt and the greeting below as Begin Message.
+#   2. Who speaks first = agent. The blank template ships start_speaker="user",
+#      which would leave live VAD with no greeting to wait for.
+#   3. Phone Numbers > bind a number's INBOUND agent to this agent.
+agent:
+  greeting: "Thanks for calling Northwind Internet. How can I help you today?"
+  system_prompt_from_scenarios: data/voice-bench/ttfab_scenarios.json
+  model: null   # accept + record the tool's default
+  stt: null     # not pinnable here at all -- see unsupported in the receipt
+  tts: null
+# Used only by harness/provision/retell.py, never by the bench.
+provision:
+  agent_name: northwind-retell-bench
+  # Copied verbatim from what the dashboard's blank single-prompt template and
+  # its llm produced, read 2026-07-30. Retell's create endpoints require
+  # voice_id and a model, so there is no "leave it to the platform" option;
+  # these are the platform's own template values, made explicit.
+  template_defaults:
+    model: gpt-4.1
+    voice_id: retell-Cimo
+    language: en-US
+  # Retell provisions numbers through a third-party carrier. Twilio, because
+  # telnyx is itself a tool under test, and putting one tool's phone leg on
+  # another's network is the entanglement the method avoids on the caller
+  # side.
+  number_provider: twilio

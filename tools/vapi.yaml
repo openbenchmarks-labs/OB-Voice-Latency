@@ -1,0 +1,41 @@
+tool: vapi
+name: Vapi
+adapter: vapi
+# The orchestrator case: Vapi owns turn-taking and the speaking plans, but
+# STT, LLM and TTS are whichever providers the assistant names. Measured the
+# same way as everyone else: out-of-the-box defaults, as a new signup gets
+# them.
+#
+# Not pinned here: with more than one assistant on the account the adapter
+# cannot tell which is under test, so it refuses rather than guess. Set
+# VAPI_ASSISTANT_ID in .env, or add `assistant_id: <id>` here, to pin yours. The
+# bench never creates it (read-only contract); harness/provision/vapi.py does.
+# number: omitted -- discovered from the account's numbers whose assistantId
+# is this assistant, or set VAPI_PHONE_NUMBER in .env to override.
+#
+# Dashboard checklist before the first run:
+#   1. Assistants > Create; paste the Northwind prompt as the (single) system
+#      message and the greeting below as First Message.
+#   2. First Message Mode = "assistant-speaks-first" (the other two modes
+#      leave live VAD with no greeting to wait for, or a greeting that differs
+#      every call).
+#   3. Phone Numbers > create a free US number > Inbound: this assistant.
+agent:
+  greeting: "Thanks for calling Northwind Internet. How can I help you today?"
+  system_prompt_from_scenarios: data/voice-bench/ttfab_scenarios.json
+  model: null   # accept + record the tool's default
+  stt: null
+  tts: null
+# Used only by harness/provision/vapi.py, never by the bench.
+provision:
+  agent_name: northwind-vapi-bench
+  # Vapi's API, unlike its dashboard, applies no default stack: an assistant
+  # created over HTTP comes back with model, transcriber and voice all null,
+  # and a patch that omits model.provider is rejected. These are copied
+  # verbatim from what the dashboard's blank assistant template produced,
+  # read 2026-07-30. The receipt records them as the defaults in force, and
+  # `--stack-from <assistant_id>` re-derives them if Vapi moves.
+  template_defaults:
+    model: {provider: openai, model: gpt-4.1}
+    transcriber: {provider: soniox, model: stt-rt-v5, language: en}
+    voice: {provider: vapi, voiceId: Elliot}

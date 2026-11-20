@@ -1,0 +1,7 @@
+name: OB-Voice-Latency
+order:
+  serves: Teams choosing a voice-agent platform based on real PSTN turn-taking latency (time to first audio byte).
+  win: Lower median and tail voice-agent response latency on standardized multi-turn phone dialogs.
+  budget_usd: 0
+  refresh_days: 30
+  not_measured_max: 0.1
