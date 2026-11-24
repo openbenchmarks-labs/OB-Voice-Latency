@@ -832,7 +832,7 @@ def write_html(report: dict, results: list[dict], run_dir: Path, *,
     if applied is None:
         applied_path = run_dir / "applied_config.json"
         if applied_path.exists():
-            applied = json.loads(applied_path.read_text())
+            applied = json.loads(applied_path.read_text(encoding="utf-8"))
     out = run_dir / "report.html"
-    out.write_text(render_html(report, results, applied=applied))
+    out.write_text(render_html(report, results, applied=applied), encoding="utf-8")
     return out
