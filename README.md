@@ -68,9 +68,9 @@ cp .env.example .env
 
 ## Related benchmarks
 
-- [OB-Inference](https://github.com/openbenchmarks-labs/OB-Inference): Serverless LLM inference latency and accuracy ([leaderboard](https://openbenchmarks.com/inference))
-- [OB-Document-Parsing-LegalQA](https://github.com/openbenchmarks-labs/OB-Document-Parsing-LegalQA): Document parsers on redlined legal contracts ([leaderboard](https://openbenchmarks.com/document-processing))
-- [OB-Code-Websearch](https://github.com/openbenchmarks-labs/OB-Code-Websearch): Web search APIs for coding agents ([leaderboard](https://openbenchmarks.com/web-search-for-coding-agents))
+- [OB-Inference-Microtasks](https://github.com/openbenchmarks-labs/OB-Inference-Microtasks): Serverless LLM inference latency and accuracy ([leaderboard](https://openbenchmarks.com/inference))
+- [OB-LegalQA-Document-Parsing](https://github.com/openbenchmarks-labs/OB-LegalQA-Document-Parsing): Document parsers on redlined legal contracts ([leaderboard](https://openbenchmarks.com/document-processing))
+- [OB-Code-WebSearch](https://github.com/openbenchmarks-labs/OB-Code-WebSearch): Web search APIs for coding agents ([leaderboard](https://openbenchmarks.com/web-search-for-coding-agents))
 - [All OpenBenchmarks leaderboards](https://openbenchmarks.com)
 
 ## License
